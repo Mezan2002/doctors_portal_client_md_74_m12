@@ -39,10 +39,12 @@ const BookingModal = ({
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.acknowledged) {
+        if (data.acknowledged === true) {
           setAppointmentDetails(null);
           toast.success("Booking Confirmed");
           refetch();
+        } else {
+          toast.error(data.message);
         }
         console.log(data);
       });
