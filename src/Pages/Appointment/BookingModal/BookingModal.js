@@ -1,11 +1,13 @@
 import { format } from "date-fns";
 import React, { useContext } from "react";
+import toast from "react-hot-toast";
 import { AuthContext } from "../../../Contexts/AuthProvider/AuthProvider";
 
 const BookingModal = ({
   appointmentDetails,
   setAppointmentDetails,
   selectedDate,
+  refetch,
 }) => {
   const { name, slots } = appointmentDetails;
   const date = format(selectedDate, "PPPP");
@@ -27,9 +29,23 @@ const BookingModal = ({
       email,
       phone,
     };
-    setAppointmentDetails(null);
 
-    console.log(bookingDetails);
+    fetch("http://localhost:5000/bookings", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(bookingDetails),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.acknowledged) {
+          setAppointmentDetails(null);
+          toast.success("Booking Confirmed");
+          refetch();
+        }
+        console.log(data);
+      });
   };
 
   return (
